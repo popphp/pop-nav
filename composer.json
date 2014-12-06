@@ -1,6 +1,6 @@
 {
     "name": "popphp/pop-nav",
-    "description": "Pop Nav Component for Pop PHP Framework 2",
+    "description": "Pop Nav Component for Pop PHP Framework",
     "keywords": [
         "nav",
         "navigation",
@@ -8,8 +8,7 @@
         "acl",
         "php",
         "pop",
-        "pop php",
-        "pop php 2"
+        "pop php"
     ],
     "homepage": "http://www.popphp.org/",
     "license": "New BSD",
@@ -28,6 +27,11 @@
     "autoload": {
         "psr-4": {
             "Pop\\Nav\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
         }
     }
 }
