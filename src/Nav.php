@@ -55,6 +55,12 @@ class Nav
     protected $role = null;
 
     /**
+     * Indentation
+     * @var string
+     */
+    protected $indent = null;
+
+    /**
      * Nav parent level
      * @var int
      */
@@ -160,15 +166,22 @@ class Nav
     {
         if (null === $config) {
             $this->config = [
+                'top'    => [
+                    'node'  => 'nav'
+                ],
                 'parent' => [
-                    'node'  => 'ul'
+                    'node'  => 'nav'
                 ],
                 'child' => [
-                    'node'  => 'li'
+                    'node'  => 'nav'
                 ]
             ];
         } else {
             $this->config = $config;
+        }
+
+        if (isset($config['indent'])) {
+            $this->setIndent($config['indent']);
         }
 
         return $this;
@@ -195,6 +208,18 @@ class Nav
     public function setRole(\Pop\Acl\Role $role = null)
     {
         $this->role = $role;
+        return $this;
+    }
+
+    /**
+     * Set the indent
+     *
+     * @param  string $indent
+     * @return Nav
+     */
+    public function setIndent($indent)
+    {
+        $this->indent = $indent;
         return $this;
     }
 
@@ -246,6 +271,16 @@ class Nav
     public function getRole()
     {
         return $this->role;
+    }
+
+    /**
+     * Get the indent
+     *
+     * @return string
+     */
+    public function getIndent()
+    {
+        return $this->indent;
     }
 
     /**
@@ -361,16 +396,19 @@ class Nav
     {
         // Create overriding top level parent, if set
         if (($depth == 1) && isset($this->config['top'])) {
-            $parent = (isset($this->config['top']) && isset($this->config['top']['node'])) ? $this->config['top']['node'] : 'ul';
+            $parent = (isset($this->config['top']) && isset($this->config['top']['node'])) ? $this->config['top']['node'] : 'nav';
             $child  = null;
             if (isset($this->config['child']) && isset($this->config['child']['node'])) {
                 $child = $this->config['child']['node'];
-            } else if ($parent == 'ul') {
-                $child = 'li';
+            } else if ($parent == 'nav') {
+                $child = 'nav';
             }
 
             // Create parent node
             $nav = new Child($parent);
+            if (null !== $this->indent) {
+                $nav->setIndent(str_repeat($this->indent, $depth));
+            }
 
             // Set top attributes if they exist
             if (isset($this->config['top']) && isset($this->config['top']['id'])) {
@@ -386,16 +424,19 @@ class Nav
             }
         } else {
             // Set up parent/child node names
-            $parent = (isset($this->config['parent']) && isset($this->config['parent']['node'])) ? $this->config['parent']['node'] : 'ul';
+            $parent = (isset($this->config['parent']) && isset($this->config['parent']['node'])) ? $this->config['parent']['node'] : 'nav';
             $child  = null;
             if (isset($this->config['child']) && isset($this->config['child']['node'])) {
                 $child = $this->config['child']['node'];
-            } else if ($parent == 'ul') {
-                $child = 'li';
+            } else if ($parent == 'nav') {
+                $child = 'nav';
             }
 
             // Create parent node
             $nav = new Child($parent);
+            if (null !== $this->indent) {
+                $nav->setIndent(str_repeat($this->indent, $depth));
+            }
 
             // Set parent attributes if they exist
             if (isset($this->config['parent']) && isset($this->config['parent']['id'])) {
@@ -431,6 +472,7 @@ class Nav
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
                 // Create child node and child link node
                 $a = new Child('a', $node['name']);
+
                 if ((substr($node['href'], 0, 1) == '/') || (substr($node['href'], 0, 1) == '#') ||
                     (substr($node['href'], -1) == '#') ||(substr($node['href'], 0, 4) == 'http')) {
                     $href = $node['href'];
