@@ -559,7 +559,10 @@ class Nav
                             }
                         }
                         if ($childrenAllowed) {
-                            $navChild->addChild($this->traverse($node['children'], $depth, $href));
+                            $nextChild = $this->traverse($node['children'], $depth, $href);
+                            if (($nextChild->hasChildren()) || (null !== $nextChild->getNodeValue())) {
+                                $navChild->addChild($nextChild);
+                            }
                         }
                     }
                     // Add child node
