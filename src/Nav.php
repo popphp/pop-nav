@@ -15,7 +15,10 @@
  */
 namespace Pop\Nav;
 
+use Pop\Acl\Acl;
+use Pop\Acl\Role\Role;
 use Pop\Dom\Child;
+
 
 /**
  * Nav class
@@ -44,13 +47,13 @@ class Nav
 
     /**
      * Acl object
-     * @var \Pop\Acl\Acl
+     * @var Acl
      */
     protected $acl = null;
 
     /**
      * Role object
-     * @var \Pop\Acl\Role
+     * @var Role
      */
     protected $role = null;
 
@@ -190,10 +193,10 @@ class Nav
     /**
      * Set the Acl object
      *
-     * @param  \Pop\Acl\Acl $acl
+     * @param  Acl $acl
      * @return Nav
      */
-    public function setAcl(\Pop\Acl\Acl $acl = null)
+    public function setAcl(Acl $acl = null)
     {
         $this->acl = $acl;
         return $this;
@@ -202,10 +205,10 @@ class Nav
     /**
      * Set the Role object
      *
-     * @param  \Pop\Acl\Role $role
+     * @param  Role $role
      * @return Nav
      */
-    public function setRole(\Pop\Acl\Role $role = null)
+    public function setRole(Role $role = null)
     {
         $this->role = $role;
         return $this;
@@ -256,7 +259,7 @@ class Nav
     /**
      * Get the Acl object
      *
-     * @return \Pop\Acl\Acl
+     * @return Acl
      */
     public function getAcl()
     {
@@ -266,7 +269,7 @@ class Nav
     /**
      * Get the Role object
      *
-     * @return \Pop\Acl\Role
+     * @return Role
      */
     public function getRole()
     {
@@ -465,9 +468,9 @@ class Nav
                 if (null === $this->role) {
                     throw new Exception('The current role is not set.');
                 }
-                $resource = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
+                $resource   = (isset($node['acl']['resource']))   ? $node['acl']['resource']   : null;
                 $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
-                $allowed = $this->acl->isAllowed($this->role, $resource, $permission);
+                $allowed    = $this->acl->isAllowed($this->role, $resource, $permission);
             }
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
                 // Create child node and child link node
@@ -548,7 +551,7 @@ class Nav
                                 if (null === $this->role) {
                                     throw new Exception('The current role is not set.');
                                 }
-                                $resource = (isset($nodeChild['acl']['resource'])) ? $nodeChild['acl']['resource'] : null;
+                                $resource   = (isset($nodeChild['acl']['resource']))  ? $nodeChild['acl']['resource']    : null;
                                 $permission = (isset($nodeChild['acl']['permission'])) ? $nodeChild['acl']['permission'] : null;
                                 if (!($this->acl->isAllowed($this->role, $resource, $permission))) {
                                     $i++;
