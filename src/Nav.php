@@ -64,6 +64,12 @@ class Nav
     protected $indent = null;
 
     /**
+     * Base URL
+     * @var string
+     */
+    protected $baseUrl = null;
+
+    /**
      * Nav parent level
      * @var int
      */
@@ -187,6 +193,10 @@ class Nav
             $this->setIndent($config['indent']);
         }
 
+        if (isset($config['baseUrl'])) {
+            $this->setBaseUrl($config['baseUrl']);
+        }
+
         return $this;
     }
 
@@ -223,6 +233,18 @@ class Nav
     public function setIndent($indent)
     {
         $this->indent = $indent;
+        return $this;
+    }
+
+    /**
+     * Set the base URL
+     *
+     * @param  string $baseUrl
+     * @return Nav
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
         return $this;
     }
 
@@ -284,6 +306,16 @@ class Nav
     public function getIndent()
     {
         return $this->indent;
+    }
+
+    /**
+     * Get the base URL
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
     }
 
     /**
@@ -476,9 +508,11 @@ class Nav
                 // Create child node and child link node
                 $a = new Child('a', $node['name']);
 
-                if ((substr($node['href'], 0, 1) == '/') || (substr($node['href'], 0, 1) == '#') ||
-                    (substr($node['href'], -1) == '#') ||(substr($node['href'], 0, 4) == 'http')) {
+                if ((substr($node['href'], 0, 1) == '#') || (substr($node['href'], -1) == '#') ||
+                    (substr($node['href'], 0, 4) == 'http') || (substr($node['href'], 0, 7) == 'mailto:')) {
                     $href = $node['href'];
+                } else if (substr($node['href'], 0, 1) == '/') {
+                    $href = $this->baseUrl . $node['href'];
                 } else {
                     if (substr($parentHref, -1) == '/') {
                         $href = $parentHref . $node['href'];
