@@ -19,7 +19,6 @@ use Pop\Acl\Acl;
 use Pop\Acl\Role\Role;
 use Pop\Dom\Child;
 
-
 /**
  * Nav class
  *
