@@ -49,7 +49,7 @@ $tree = [
 ];
 ```
 
-Then, you have a significant amount of control over the branches nodes
+Then, you have a significant amount of control over the branch nodes
 and attributes via a configuration array:
 
 ```php
