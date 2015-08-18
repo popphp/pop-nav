@@ -494,12 +494,14 @@ class Nav
                 if (null === $this->acl) {
                     throw new Exception('The access control object is not set.');
                 }
-                if (null === $this->role) {
-                    throw new Exception('The current role is not set.');
+                if (!isset($node['acl']['role']) && (null === $this->role)) {
+                    $allowed = false;
+                } else {
+                    $role       = (isset($node['acl']['role'])) ? $node['acl']['role'] : $this->role;
+                    $resource   = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
+                    $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
+                    $allowed    = $this->acl->isAllowed($role, $resource, $permission);
                 }
-                $resource   = (isset($node['acl']['resource']))   ? $node['acl']['resource']   : null;
-                $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
-                $allowed    = $this->acl->isAllowed($this->role, $resource, $permission);
             }
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
                 // Create child node and child link node
@@ -573,24 +575,26 @@ class Nav
                     if (isset($node['children']) && is_array($node['children']) && (count($node['children']) > 0)) {
                         $childrenAllowed = true;
                         // Check if the children are allowed
-                        if (isset($node['acl'])) {
-                            $i = 0;
-                            foreach ($node['children'] as $nodeChild) {
+                        $i = 0;
+                        foreach ($node['children'] as $nodeChild) {
+                            if (isset($nodeChild['acl'])) {
                                 if (null === $this->acl) {
                                     throw new Exception('The access control object is not set.');
                                 }
-                                if (null === $this->role) {
-                                    throw new Exception('The current role is not set.');
-                                }
-                                $resource   = (isset($nodeChild['acl']['resource']))  ? $nodeChild['acl']['resource']    : null;
-                                $permission = (isset($nodeChild['acl']['permission'])) ? $nodeChild['acl']['permission'] : null;
-                                if (!($this->acl->isAllowed($this->role, $resource, $permission))) {
-                                    $i++;
+                                if (!isset($nodeChild['acl']['role']) && (null === $this->role)) {
+                                    $childrenAllowed = false;
+                                } else {
+                                    $role       = (isset($nodeChild['acl']['role'])) ? $nodeChild['acl']['role'] : $this->role;
+                                    $resource   = (isset($nodeChild['acl']['resource'])) ? $nodeChild['acl']['resource'] : null;
+                                    $permission = (isset($nodeChild['acl']['permission'])) ? $nodeChild['acl']['permission'] : null;
+                                    if (!($this->acl->isAllowed($role, $resource, $permission))) {
+                                        $i++;
+                                    }
                                 }
                             }
-                            if ($i == count($node['children'])) {
-                                $childrenAllowed = false;
-                            }
+                        }
+                        if ($i == count($node['children'])) {
+                            $childrenAllowed = false;
                         }
                         if ($childrenAllowed) {
                             $nextChild = $this->traverse($node['children'], $depth, $href);
