@@ -2,7 +2,7 @@ pop-nav
 =======
 
 [![Build Status](https://travis-ci.org/popphp/pop-nav.svg?branch=master)](https://travis-ci.org/popphp/pop-nav)
-[![Coverage Status](http://www.popphp.org/cc/coverage.php?comp=pop-nav)](http://www.popphp.org/cc/pop-nav/)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-nav)](http://cc.popphp.org/pop-nav/)
 
 OVERVIEW
 --------
