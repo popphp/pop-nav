@@ -14,18 +14,18 @@
 namespace Pop\Nav;
 
 use Pop\Acl\Acl;
-use Pop\Acl\Role\Role;
-use Pop\Dom\Child;
+use Pop\Acl\AclRole;
+use Pop\Nav\Child;
 
 /**
  * Nav class
  *
  * @category   Pop
- * @package    Pop_Nav
+ * @package    Pop\Nav
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.1.0
+ * @version    3.0.0
  */
 class Nav
 {
@@ -49,8 +49,8 @@ class Nav
     protected $acl = null;
 
     /**
-     * Role object
-     * @var Role
+     * AclRole object
+     * @var AclRole
      */
     protected $role = null;
 
@@ -86,7 +86,7 @@ class Nav
 
     /**
      * Parent nav element
-     * @var \Pop\Dom\Child
+     * @var \Pop\Nav\Child
      */
     protected $nav = null;
 
@@ -210,12 +210,12 @@ class Nav
     }
 
     /**
-     * Set the Role object
+     * Set the AclRole object
      *
-     * @param  Role $role
+     * @param  AclRole $role
      * @return Nav
      */
-    public function setRole(Role $role = null)
+    public function setRole(AclRole $role = null)
     {
         $this->role = $role;
         return $this;
@@ -286,9 +286,9 @@ class Nav
     }
 
     /**
-     * Get the Role object
+     * Get the AclRole object
      *
-     * @return Role
+     * @return AclRole
      */
     public function getRole()
     {
@@ -344,7 +344,7 @@ class Nav
     /**
      * Get the nav object
      *
-     * @return \Pop\Dom\Child
+     * @return \Pop\Nav\Child
      */
     public function nav()
     {
@@ -422,7 +422,7 @@ class Nav
      * @param  int    $depth
      * @param  string $parentHref
      * @throws Exception
-     * @return \Pop\Dom\Child
+     * @return \Pop\Nav\Child
      */
     protected function traverse(array $tree, $depth = 1, $parentHref = null)
     {
