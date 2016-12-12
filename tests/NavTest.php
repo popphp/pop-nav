@@ -3,8 +3,8 @@
 namespace Pop\Nav\Test;
 
 use Pop\Acl\Acl;
-use Pop\Acl\Role\Role;
-use Pop\Acl\Resource\Resource;
+use Pop\Acl\AclRole;
+use Pop\Acl\AclResource;
 use Pop\Nav\Nav;
 
 class NavTest extends \PHPUnit_Framework_TestCase
@@ -106,17 +106,17 @@ class NavTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('/pages/remove', (string)$nav);
 
         $nav = new Nav($tree);
-        $this->assertInstanceOf('Pop\Dom\Child', $nav->nav());
+        $this->assertInstanceOf('Pop\Nav\Child', $nav->nav());
     }
 
     public function testAcl()
     {
         $_SERVER['REQUEST_URI'] = '/home';
 
-        $reader = new Role('reader');
-        $editor = new Role('editor');
-        $page   = new Resource('page');
-        $user   = new Resource('user');
+        $reader = new AclRole('reader');
+        $editor = new AclRole('editor');
+        $page   = new AclResource('page');
+        $user   = new AclResource('user');
 
         $acl = new Acl();
         $acl->addRoles([$reader, $editor]);
@@ -214,7 +214,7 @@ class NavTest extends \PHPUnit_Framework_TestCase
 
         $menu = (string)$nav;
         $this->assertInstanceOf('Pop\Acl\Acl', $nav->getAcl());
-        $this->assertInstanceOf('Pop\Acl\Role\Role', $nav->getRole());
+        $this->assertInstanceOf('Pop\Acl\AclRole', $nav->getRole());
         $this->assertEquals('    ', $nav->getConfig()['indent']);
         $this->assertEquals('Pages', $nav->getTree()[0]['name']);
         $this->assertContains('/users/add', $menu);
@@ -223,13 +223,13 @@ class NavTest extends \PHPUnit_Framework_TestCase
 
     public function testAclNotSetException()
     {
-        $this->setExpectedException('Pop\Nav\Exception');
+        $this->expectException('Pop\Nav\Exception');
         $_SERVER['REQUEST_URI'] = '/home';
 
-        $reader = new Role('reader');
-        $editor = new Role('editor');
-        $page   = new Resource('page');
-        $user   = new Resource('user');
+        $reader = new AclRole('reader');
+        $editor = new AclRole('editor');
+        $page   = new AclResource('page');
+        $user   = new AclResource('user');
 
         $acl = new Acl();
         $acl->addRoles([$reader, $editor]);

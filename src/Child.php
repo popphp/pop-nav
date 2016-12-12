@@ -78,7 +78,6 @@ class Child
      * @param  mixed   $childNode
      * @param  boolean $first
      * @param  string  $indent
-     * @return Child
      */
     public function __construct($name, $value = null, $childNode = null, $first = false, $indent = null)
     {
