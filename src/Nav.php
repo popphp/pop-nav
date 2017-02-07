@@ -15,7 +15,7 @@ namespace Pop\Nav;
 
 use Pop\Acl\Acl;
 use Pop\Acl\AclRole;
-use Pop\Nav\Child;
+use Pop\Dom\Child;
 
 /**
  * Nav class
@@ -86,7 +86,7 @@ class Nav
 
     /**
      * Parent nav element
-     * @var \Pop\Nav\Child
+     * @var \Pop\Dom\Child
      */
     protected $nav = null;
 
@@ -344,7 +344,7 @@ class Nav
     /**
      * Get the nav object
      *
-     * @return \Pop\Nav\Child
+     * @return \Pop\Dom\Child
      */
     public function nav()
     {
@@ -422,7 +422,7 @@ class Nav
      * @param  int    $depth
      * @param  string $parentHref
      * @throws Exception
-     * @return \Pop\Nav\Child
+     * @return \Pop\Dom\Child
      */
     protected function traverse(array $tree, $depth = 1, $parentHref = null)
     {

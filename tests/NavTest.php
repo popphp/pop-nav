@@ -106,7 +106,7 @@ class NavTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('/pages/remove', (string)$nav);
 
         $nav = new Nav($tree);
-        $this->assertInstanceOf('Pop\Nav\Child', $nav->nav());
+        $this->assertInstanceOf('Pop\Dom\Child', $nav->nav());
     }
 
     public function testAcl()
