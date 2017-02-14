@@ -209,7 +209,7 @@ class NavTest extends \PHPUnit_Framework_TestCase
             ->setRole($editor);
 
         ob_start();
-        $nav->render(false);
+        echo $nav;
         $result = ob_get_clean();
 
         $menu = (string)$nav;
@@ -318,7 +318,7 @@ class NavTest extends \PHPUnit_Framework_TestCase
         ];
 
         $nav = new Nav($tree, $config);
-        $menu = $nav->render(true);
+        $menu = $nav->render();
     }
 
 }

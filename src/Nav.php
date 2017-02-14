@@ -357,20 +357,16 @@ class Nav
     /**
      * Render the nav object
      *
-     * @param  boolean $ret
-     * @return mixed
+     * @return string
      */
-    public function render($ret = false)
+    public function render()
     {
         if (null === $this->nav) {
             $this->nav = $this->traverse($this->tree);
         }
 
-        if ($ret) {
-            return ($this->nav->hasChildren()) ? $this->nav->render($ret) : '';
-        } else {
-            echo ($this->nav->hasChildren()) ? $this->nav->render($ret) : '';
-        }
+        $result = ($this->nav->hasChildren()) ? $this->nav->render() : '';
+        return $result;
     }
 
     /**
@@ -380,7 +376,7 @@ class Nav
      */
     public function __toString()
     {
-        return $this->render(true);
+        return $this->render();
     }
 
     /**
