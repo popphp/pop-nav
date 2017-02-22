@@ -1,6 +1,9 @@
 pop-nav
 =======
 
+[![Build Status](https://travis-ci.org/popphp/pop-nav.svg?branch=master)](https://travis-ci.org/popphp/pop-nav)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-nav)](http://cc.popphp.org/pop-nav/)
+
 OVERVIEW
 --------
 `pop-nav` is a component for managing and rendering an HTML navigation tree. It includes support for
