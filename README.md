@@ -108,8 +108,8 @@ First, let's set up the ACL object with some roles and resources:
 
 ```php
 use Pop\Acl\Acl;
-use Pop\Acl\Role\Role;
-use Pop\Acl\Resource\Resource;
+use Pop\Acl\AclRole as Role;
+use Pop\Acl\AclResource as Resource;
 
 $acl = new Acl();
 
