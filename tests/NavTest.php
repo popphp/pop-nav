@@ -214,11 +214,32 @@ class NavTest extends \PHPUnit_Framework_TestCase
 
         $menu = (string)$nav;
         $this->assertInstanceOf('Pop\Acl\Acl', $nav->getAcl());
-        $this->assertInstanceOf('Pop\Acl\AclRole', $nav->getRole());
+        $this->assertInstanceOf('Pop\Acl\AclRole', $nav->getRole('editor'));
         $this->assertEquals('    ', $nav->getConfig()['indent']);
         $this->assertEquals('Pages', $nav->getTree()[0]['name']);
         $this->assertContains('/users/add', $menu);
         $this->assertContains('/users/edit', $result);
+    }
+
+    public function testAclStrict()
+    {
+        $nav = new Nav();
+        $nav->setAclStrict(true);
+        $this->assertTrue($nav->isAclStrict());
+    }
+
+    public function testAddRoles()
+    {
+        $reader = new AclRole('reader');
+        $editor = new AclRole('editor');
+
+        $nav = new Nav();
+        $nav->addRole($reader);
+        $nav->addRoles([$editor]);
+        $this->assertEquals(2, count($nav->getRoles()));
+        $this->assertTrue($nav->hasRoles());
+        $this->assertTrue($nav->hasRole('editor'));
+        $this->assertTrue($nav->hasRole('reader'));
     }
 
     public function testAclNotSetException()

@@ -49,10 +49,16 @@ class Nav
     protected $acl = null;
 
     /**
-     * AclRole object
-     * @var AclRole
+     * AclRole role objects
+     * @var array
      */
-    protected $role = null;
+    protected $roles = [];
+
+    /**
+     * Acl strict flag
+     * @var boolean
+     */
+    protected $aclStrict = false;
 
     /**
      * Indentation
@@ -210,14 +216,52 @@ class Nav
     }
 
     /**
-     * Set the AclRole object
+     * Set a AclRole object (alias method)
      *
      * @param  AclRole $role
      * @return Nav
      */
     public function setRole(AclRole $role = null)
     {
-        $this->role = $role;
+        $this->roles[$role->getName()] = $role;
+        return $this;
+    }
+
+    /**
+     * Add a AclRole object
+     *
+     * @param  AclRole $role
+     * @return Nav
+     */
+    public function addRole(AclRole $role = null)
+    {
+        return $this->setRole($role);
+    }
+
+    /**
+     * Add AclRole objects
+     *
+     * @param  array $roles
+     * @return Nav
+     */
+    public function addRoles(array $roles)
+    {
+        foreach ($roles as $role) {
+            $this->setRole($role);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the Acl object as strict evaluation
+     *
+     * @param  boolean $strict
+     * @return Nav
+     */
+    public function setAclStrict($strict)
+    {
+        $this->aclStrict = (bool)$strict;
         return $this;
     }
 
@@ -256,6 +300,16 @@ class Nav
     }
 
     /**
+     * Determine if the Acl object is set as strict evaluation
+     *
+     * @return boolean
+     */
+    public function isAclStrict()
+    {
+        return $this->aclStrict;
+    }
+
+    /**
      * Get the nav tree
      *
      * @return array
@@ -286,13 +340,45 @@ class Nav
     }
 
     /**
-     * Get the AclRole object
+     * Determine if there are roles
      *
+     * @return boolean
+     */
+    public function hasRoles()
+    {
+        return (count($this->roles) > 0);
+    }
+
+    /**
+     * Determine if there is a certain role
+     *
+     * @param  string $name
+     * @return boolean
+     */
+    public function hasRole($name)
+    {
+        return (isset($this->roles[$name]));
+    }
+
+    /**
+     * Get the AclRole objects
+     *
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Get a AclRole object
+     *
+     * @param  string $name
      * @return AclRole
      */
-    public function getRole()
+    public function getRole($name)
     {
-        return $this->role;
+        return (isset($this->roles[$name])) ? $this->roles[$name] : null;
     }
 
     /**
@@ -490,12 +576,14 @@ class Nav
                 if (null === $this->acl) {
                     throw new Exception('The access control object is not set.');
                 }
-                if (null === $this->role) {
+                if (empty($this->roles)) {
                     $allowed = false;
                 } else {
                     $resource   = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
                     $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
-                    $allowed    = $this->acl->isAllowed($this->role, $resource, $permission);
+                    $allowed    = ($this->aclStrict) ?
+                        $this->acl->isAllowedManyStrict($this->roles, $resource, $permission) :
+                        $this->acl->isAllowedMany($this->roles, $resource, $permission);
                 }
             }
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
@@ -577,12 +665,13 @@ class Nav
                                 if (null === $this->acl) {
                                     throw new Exception('The access control object is not set.');
                                 }
-                                if (null === $this->role) {
+                                if (empty($this->roles)) {
                                     $childrenAllowed = false;
                                 } else {
                                     $resource   = (isset($nodeChild['acl']['resource'])) ? $nodeChild['acl']['resource'] : null;
                                     $permission = (isset($nodeChild['acl']['permission'])) ? $nodeChild['acl']['permission'] : null;
-                                    if (!($this->acl->isAllowed($this->role, $resource, $permission))) {
+                                    $method     = ($this->aclStrict) ? 'isAllowedManyStrict' : 'isAllowedMany';
+                                    if (!($this->acl->{$method}($this->roles, $resource, $permission))) {
                                         $i++;
                                     }
                                 }
