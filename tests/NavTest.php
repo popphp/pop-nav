@@ -6,8 +6,9 @@ use Pop\Acl\Acl;
 use Pop\Acl\AclRole;
 use Pop\Acl\AclResource;
 use Pop\Nav\Nav;
+use PHPUnit\Framework\TestCase;
 
-class NavTest extends \PHPUnit_Framework_TestCase
+class NavTest extends TestCase
 {
 
     public function testConstructor()
@@ -35,6 +36,28 @@ class NavTest extends \PHPUnit_Framework_TestCase
         $nav = new Nav();
         $nav->setBaseUrl('/home');
         $this->assertEquals('/home', $nav->getBaseUrl());
+    }
+
+    public function testParentLevel()
+    {
+        $nav = new Nav();
+        $nav->setParentLevel(2);
+        $this->assertEquals(2, $nav->getParentLevel());
+        $nav->incrementParentLevel();
+        $this->assertEquals(3, $nav->getParentLevel());
+        $nav->decrementParentLevel();
+        $this->assertEquals(2, $nav->getParentLevel());
+    }
+
+    public function testChildLevel()
+    {
+        $nav = new Nav();
+        $nav->setChildLevel(2);
+        $this->assertEquals(2, $nav->getChildLevel());
+        $nav->incrementChildLevel();
+        $this->assertEquals(3, $nav->getChildLevel());
+        $nav->decrementChildLevel();
+        $this->assertEquals(2, $nav->getChildLevel());
     }
 
     public function testAddBranch()

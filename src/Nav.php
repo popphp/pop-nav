@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2018 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -23,9 +23,9 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Nav
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2018 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.1
+ * @version    3.2.0
  */
 class Nav
 {
@@ -92,7 +92,7 @@ class Nav
 
     /**
      * Parent nav element
-     * @var \Pop\Dom\Child
+     * @var Child
      */
     protected $nav = null;
 
@@ -103,7 +103,6 @@ class Nav
      *
      * @param  array $tree
      * @param  array $config
-     * @return self
      */
     public function __construct(array $tree = null, array $config = null)
     {
@@ -162,7 +161,7 @@ class Nav
      */
     public function addLeaf($branch, array $leaf, $pos = null, $prepend = false)
     {
-        $this->tree = $this->traverseTree($this->tree, $branch, $leaf, $pos, $prepend);
+        $this->tree        = $this->traverseTree($this->tree, $branch, $leaf, $pos, $prepend);
         $this->parentLevel = 1;
         $this->childLevel  = 1;
         return $this;
@@ -290,6 +289,74 @@ class Nav
     }
 
     /**
+     * Set parent level
+     *
+     * @param  int $level
+     * @return Nav
+     */
+    public function setParentLevel($level)
+    {
+        $this->parentLevel = (int)$level;
+        return $this;
+    }
+
+    /**
+     * Increment parent level
+     *
+     * @return Nav
+     */
+    public function incrementParentLevel()
+    {
+        $this->parentLevel++;
+        return $this;
+    }
+
+    /**
+     * Decrement parent level
+     *
+     * @return Nav
+     */
+    public function decrementParentLevel()
+    {
+        $this->parentLevel--;
+        return $this;
+    }
+
+    /**
+     * Set child level
+     *
+     * @param  int $level
+     * @return Nav
+     */
+    public function setChildLevel($level)
+    {
+        $this->childLevel = (int)$level;
+        return $this;
+    }
+
+    /**
+     * Increment child level
+     *
+     * @return Nav
+     */
+    public function incrementChildLevel()
+    {
+        $this->childLevel++;
+        return $this;
+    }
+
+    /**
+     * Decrement child level
+     *
+     * @return Nav
+     */
+    public function decrementChildLevel()
+    {
+        $this->childLevel--;
+        return $this;
+    }
+
+    /**
      * Set the return false flag
      *
      * @return boolean
@@ -402,6 +469,49 @@ class Nav
     }
 
     /**
+     * Get parent level
+     *
+     * @return int
+     */
+    public function getParentLevel()
+    {
+        return $this->parentLevel;
+    }
+
+    /**
+     * Get child level
+     *
+     * @return int
+     */
+    public function getChildLevel()
+    {
+        return $this->childLevel;
+    }
+
+    /**
+     * Get the nav object
+     *
+     * @return Child
+     */
+    public function getNav()
+    {
+        if (null === $this->nav) {
+            $this->nav = NavBuilder::build($this, $this->tree);
+        }
+        return $this->nav;
+    }
+
+    /**
+     * Get the nav object (alias)
+     *
+     * @return Child
+     */
+    public function nav()
+    {
+        return $this->getNav();
+    }
+
+    /**
      * Build the nav object
      *
      * @return Nav
@@ -409,7 +519,7 @@ class Nav
     public function build()
     {
         if (null === $this->nav) {
-            $this->nav = $this->traverse($this->tree);
+            $this->nav = NavBuilder::build($this, $this->tree);
         }
         return $this;
     }
@@ -423,21 +533,8 @@ class Nav
     {
         $this->parentLevel = 1;
         $this->childLevel  = 1;
-        $this->nav = $this->traverse($this->tree);
+        $this->nav         = NavBuilder::build($this, $this->tree);
         return $this;
-    }
-
-    /**
-     * Get the nav object
-     *
-     * @return \Pop\Dom\Child
-     */
-    public function nav()
-    {
-        if (null === $this->nav) {
-            $this->nav = $this->traverse($this->tree);
-        }
-        return $this->nav;
     }
 
     /**
@@ -448,7 +545,7 @@ class Nav
     public function render()
     {
         if (null === $this->nav) {
-            $this->nav = $this->traverse($this->tree);
+            $this->nav = NavBuilder::build($this, $this->tree);
         }
 
         $result = ($this->nav->hasChildren()) ? $this->nav->render() : '';
@@ -495,207 +592,6 @@ class Nav
         }
 
         return $t;
-    }
-
-    /**
-     * Traverse the config object
-     *
-     * @param  array  $tree
-     * @param  int    $depth
-     * @param  string $parentHref
-     * @throws Exception
-     * @return \Pop\Dom\Child
-     */
-    protected function traverse(array $tree, $depth = 1, $parentHref = null)
-    {
-        // Create overriding top level parent, if set
-        if (($depth == 1) && isset($this->config['top'])) {
-            $parent = (isset($this->config['top']) && isset($this->config['top']['node'])) ? $this->config['top']['node'] : 'nav';
-            $child  = null;
-            if (isset($this->config['child']) && isset($this->config['child']['node'])) {
-                $child = $this->config['child']['node'];
-            } else if ($parent == 'nav') {
-                $child = 'nav';
-            }
-
-            // Create parent node
-            $nav = new Child($parent);
-            if (null !== $this->indent) {
-                $nav->setIndent(str_repeat($this->indent, $depth));
-            }
-
-            // Set top attributes if they exist
-            if (isset($this->config['top']) && isset($this->config['top']['id'])) {
-                $nav->setAttribute('id', $this->config['top']['id']);
-            }
-            if (isset($this->config['top']) && isset($this->config['top']['class'])) {
-                $nav->setAttribute('class', $this->config['top']['class']);
-            }
-            if (isset($this->config['top']['attributes'])) {
-                foreach ($this->config['top']['attributes'] as $attrib => $value) {
-                    $nav->setAttribute($attrib, $value);
-                }
-            }
-        } else {
-            // Set up parent/child node names
-            $parent = (isset($this->config['parent']) && isset($this->config['parent']['node'])) ? $this->config['parent']['node'] : 'nav';
-            $child  = null;
-            if (isset($this->config['child']) && isset($this->config['child']['node'])) {
-                $child = $this->config['child']['node'];
-            } else if ($parent == 'nav') {
-                $child = 'nav';
-            }
-
-            // Create parent node
-            $nav = new Child($parent);
-            if (null !== $this->indent) {
-                $nav->setIndent(str_repeat($this->indent, $depth));
-            }
-
-            // Set parent attributes if they exist
-            if (isset($this->config['parent']) && isset($this->config['parent']['id'])) {
-                $nav->setAttribute('id', $this->config['parent']['id'] . '-' . $this->parentLevel);
-            }
-            if (isset($this->config['parent']) && isset($this->config['parent']['class'])) {
-                $nav->setAttribute('class', $this->config['parent']['class'] . '-' . $depth);
-            }
-            if (isset($this->config['parent']['attributes'])) {
-                foreach ($this->config['parent']['attributes'] as $attrib => $value) {
-                    $nav->setAttribute($attrib, $value);
-                }
-            }
-        }
-
-        $this->parentLevel++;
-        $depth++;
-
-        // Recursively loop through the nodes
-        foreach ($tree as $node) {
-            $allowed = true;
-            if (isset($node['acl'])) {
-                if (null === $this->acl) {
-                    throw new Exception('The access control object is not set.');
-                }
-                if (empty($this->roles)) {
-                    $allowed = false;
-                } else {
-                    $resource   = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
-                    $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
-                    $allowed    = ($this->aclStrict) ?
-                        $this->acl->isAllowedManyStrict($this->roles, $resource, $permission) :
-                        $this->acl->isAllowedMany($this->roles, $resource, $permission);
-                }
-            }
-            if (($allowed) && isset($node['name']) && isset($node['href'])) {
-                // Create child node and child link node
-                $a = new Child('a', $node['name']);
-
-                if ((substr($node['href'], 0, 1) == '#') || (substr($node['href'], -1) == '#') ||
-                    (substr($node['href'], 0, 4) == 'http') || (substr($node['href'], 0, 7) == 'mailto:')) {
-                    $href = $node['href'];
-                } else if (substr($node['href'], 0, 1) == '/') {
-                    $href = $this->baseUrl . $node['href'];
-                } else {
-                    if (substr($parentHref, -1) == '/') {
-                        $href = $parentHref . $node['href'];
-                    } else {
-                        $href = $parentHref . '/' . $node['href'];
-                    }
-                }
-
-                $a->setAttribute('href', $href);
-
-                if (($this->returnFalse) && (($href == '#') || (substr($href, -1) == '#'))) {
-                    $a->setAttribute('onclick', 'return false;');
-                }
-                $url = $_SERVER['REQUEST_URI'];
-                if (strpos($url, '?') !== false) {
-                    $url = substr($url, strpos($url, '?'));
-                }
-
-                $linkClass = null;
-                if ($href == $url) {
-                    if (isset($this->config['on'])) {
-                        $linkClass = $this->config['on'];
-                    }
-                } else {
-                    if (isset($this->config['off'])) {
-                        $linkClass = $this->config['off'];
-                    }
-                }
-
-                // If the node has any attributes
-                if (isset($node['attributes'])) {
-                    foreach ($node['attributes'] as $attrib => $value) {
-                        $value = (($attrib == 'class') && (null !== $linkClass)) ? $value . ' ' . $linkClass : $value;
-                        $a->setAttribute($attrib, $value);
-                    }
-                } else if (null !== $linkClass) {
-                    $a->setAttribute('class', $linkClass);
-                }
-
-                if (null !== $child) {
-                    $navChild = new Child($child);
-
-                    // Set child attributes if they exist
-                    if (isset($this->config['child']) && isset($this->config['child']['id'])) {
-                        $navChild->setAttribute('id', $this->config['child']['id'] . '-' . $this->childLevel);
-                    }
-                    if (isset($this->config['child']) && isset($this->config['child']['class'])) {
-                        $navChild->setAttribute('class', $this->config['child']['class'] . '-' . ($depth - 1));
-                    }
-                    if (isset($this->config['child']['attributes'])) {
-                        foreach ($this->config['child']['attributes'] as $attrib => $value) {
-                            $navChild->setAttribute($attrib, $value);
-                        }
-                    }
-
-                    // Add link node
-                    $navChild->addChild($a);
-                    $this->childLevel++;
-
-                    // If there are children, loop through and add them
-                    if (isset($node['children']) && is_array($node['children']) && (count($node['children']) > 0)) {
-                        $childrenAllowed = true;
-                        // Check if the children are allowed
-
-                        $i = 0;
-                        foreach ($node['children'] as $nodeChild) {
-                            if (isset($nodeChild['acl'])) {
-                                if (null === $this->acl) {
-                                    throw new Exception('The access control object is not set.');
-                                }
-                                if (empty($this->roles)) {
-                                    $childrenAllowed = false;
-                                } else {
-                                    $resource   = (isset($nodeChild['acl']['resource'])) ? $nodeChild['acl']['resource'] : null;
-                                    $permission = (isset($nodeChild['acl']['permission'])) ? $nodeChild['acl']['permission'] : null;
-                                    $method     = ($this->aclStrict) ? 'isAllowedManyStrict' : 'isAllowedMany';
-                                    if (!($this->acl->{$method}($this->roles, $resource, $permission))) {
-                                        $i++;
-                                    }
-                                }
-                            }
-                        }
-                        if ($i == count($node['children'])) {
-                            $childrenAllowed = false;
-                        }
-                        if ($childrenAllowed) {
-                            $nextChild = $this->traverse($node['children'], $depth, $href);
-                            if (($nextChild->hasChildren()) || (null !== $nextChild->getNodeValue())) {
-                                $navChild->addChild($nextChild);
-                            }
-                        }
-                    }
-                    // Add child node
-                    $nav->addChild($navChild);
-                } else {
-                    $nav->addChild($a);
-                }
-            }
-        }
-
-        return $nav;
     }
 
 }
