@@ -96,7 +96,7 @@ class NavTest extends TestCase
             ]
         ]);
 
-        $this->assertContains('/users/add', (string)$nav);
+        $this->assertStringContainsString('/users/add', (string)$nav);
     }
 
     public function testAddLeaf()
@@ -126,7 +126,7 @@ class NavTest extends TestCase
         ]);
         $nav->build();
         $nav->rebuild();
-        $this->assertContains('/pages/remove', (string)$nav);
+        $this->assertStringContainsString('/pages/remove', (string)$nav);
 
         $nav = new Nav($tree);
         $this->assertInstanceOf('Pop\Dom\Child', $nav->nav());
@@ -240,8 +240,8 @@ class NavTest extends TestCase
         $this->assertInstanceOf('Pop\Acl\AclRole', $nav->getRole('editor'));
         $this->assertEquals('    ', $nav->getConfig()['indent']);
         $this->assertEquals('Pages', $nav->getTree()[0]['name']);
-        $this->assertContains('/users/add', $menu);
-        $this->assertContains('/users/edit', $result);
+        $this->assertStringContainsString('/users/add', $menu);
+        $this->assertStringContainsString('/users/edit', $result);
     }
 
     public function testAclStrict()

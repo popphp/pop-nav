@@ -1,7 +1,7 @@
 pop-nav
 =======
 
-[![Build Status](https://travis-ci.org/popphp/pop-nav.svg?branch=master)](https://travis-ci.org/popphp/pop-nav)
+[![Build Status](https://github.com/popphp/pop-nav/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-nav/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-nav)](http://cc.popphp.org/pop-nav/)
 
 OVERVIEW
