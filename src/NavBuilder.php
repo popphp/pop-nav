@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,7 +21,7 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Nav
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.3.0
  */
@@ -31,14 +31,14 @@ class NavBuilder
     /**
      * Build the navigation from the nav object
      *
-     * @param  Nav    $navObject
-     * @param  array  $tree
-     * @param  int    $depth
-     * @param  string $parentHref
-     * @throws Exception
+     * @param  Nav     $navObject
+     * @param  array   $tree
+     * @param  int     $depth
+     * @param  ?string $parentHref
+     * @throws Exception|\Pop\Acl\Exception
      * @return Child
      */
-    public static function build(Nav $navObject, array $tree, $depth = 1, $parentHref = null)
+    public static function build(Nav $navObject, array $tree, int $depth = 1, ?string $parentHref = null): Child
     {
         $config        = $navObject->getConfig();
         [$nav, $child] = self::prepare($navObject, $config, $depth);
@@ -50,7 +50,7 @@ class NavBuilder
         foreach ($tree as $node) {
             $allowed = true;
             if (isset($node['acl'])) {
-                if (null === $navObject->getAcl()) {
+                if ($navObject->getAcl() === null) {
                     throw new Exception('The access control object is not set.');
                 }
                 if (empty($navObject->getRoles())) {
@@ -67,13 +67,13 @@ class NavBuilder
                 // Create child node and child link node
                 $a = new Child('a', $node['name']);
 
-                if ((substr($node['href'], 0, 1) == '#') || (substr($node['href'], -1) == '#') ||
-                    (substr($node['href'], 0, 4) == 'http') || (substr($node['href'], 0, 7) == 'mailto:')) {
+                if ((str_starts_with($node['href'], '#')) || (str_ends_with($node['href'], '#')) ||
+                    (str_starts_with($node['href'], 'http')) || (str_starts_with($node['href'], 'mailto:'))) {
                     $href = $node['href'];
-                } else if (substr($node['href'], 0, 1) == '/') {
+                } else if (str_starts_with($node['href'], '/')) {
                     $href = $navObject->getBaseUrl() . $node['href'];
                 } else {
-                    if (substr($parentHref, -1) == '/') {
+                    if (str_ends_with($parentHref, '/')) {
                         $href = $parentHref . $node['href'];
                     } else {
                         $href = $parentHref . '/' . $node['href'];
@@ -82,11 +82,11 @@ class NavBuilder
 
                 $a->setAttribute('href', $href);
 
-                if (($navObject->isReturnFalse()) && (($href == '#') || (substr($href, -1) == '#'))) {
+                if (($navObject->isReturnFalse()) && (($href == '#') || (str_ends_with($href, '#')))) {
                     $a->setAttribute('onclick', 'return false;');
                 }
                 $url = $_SERVER['REQUEST_URI'];
-                if (strpos($url, '?') !== false) {
+                if (str_contains($url, '?')) {
                     $url = substr($url, strpos($url, '?'));
                 }
 
@@ -104,14 +104,14 @@ class NavBuilder
                 // If the node has any attributes
                 if (isset($node['attributes'])) {
                     foreach ($node['attributes'] as $attrib => $value) {
-                        $value = (($attrib == 'class') && (null !== $linkClass)) ? $value . ' ' . $linkClass : $value;
+                        $value = (($attrib == 'class') && ($linkClass !== null)) ? $value . ' ' . $linkClass : $value;
                         $a->setAttribute($attrib, $value);
                     }
-                } else if (null !== $linkClass) {
+                } else if ($linkClass !== null) {
                     $a->setAttribute('class', $linkClass);
                 }
 
-                if (null !== $child) {
+                if ($child !== null) {
                     $navChild = new Child($child);
 
                     // Set child attributes if they exist
@@ -139,7 +139,7 @@ class NavBuilder
                         $i = 0;
                         foreach ($node['children'] as $nodeChild) {
                             if (isset($nodeChild['acl'])) {
-                                if (null === $navObject->getAcl()) {
+                                if ($navObject->getAcl() === null) {
                                     throw new Exception('The access control object is not set.');
                                 }
                                 if (empty($navObject->getRoles())) {
@@ -159,7 +159,7 @@ class NavBuilder
                         }
                         if ($childrenAllowed) {
                             $nextChild = self::build($navObject, $node['children'], $depth, $href);
-                            if (($nextChild->hasChildren()) || (null !== $nextChild->getNodeValue())) {
+                            if (($nextChild->hasChildren()) || ($nextChild->getNodeValue() !== null)) {
                                 $navChild->addChild($nextChild);
                             }
                         }
@@ -183,7 +183,7 @@ class NavBuilder
      * @param  int   $depth
      * @return array
      */
-    public static function prepare(Nav $navObject, $config, $depth = 1)
+    public static function prepare(Nav $navObject, array $config, int $depth = 1): array
     {
         // Create overriding top level parent, if set
         if (($depth == 1) && isset($config['top'])) {
@@ -197,7 +197,7 @@ class NavBuilder
 
             // Create parent node
             $nav = new Child($parent);
-            if (null !== $navObject->getIndent()) {
+            if ($navObject->getIndent() !== null) {
                 $nav->setIndent(str_repeat($navObject->getIndent(), $depth));
             }
 
@@ -225,7 +225,7 @@ class NavBuilder
 
             // Create parent node
             $nav = new Child($parent);
-            if (null !== $navObject->getIndent()) {
+            if ($navObject->getIndent() !== null) {
                 $nav->setIndent(str_repeat($navObject->getIndent(), $depth));
             }
 

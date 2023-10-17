@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -23,7 +23,7 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Nav
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.3.0
  */
@@ -34,77 +34,77 @@ class Nav
      * Nav tree
      * @var array
      */
-    protected $tree = [];
+    protected array $tree = [];
 
     /**
      * Nav config
      * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * Acl object
-     * @var Acl
+     * @var ?Acl
      */
-    protected $acl = null;
+    protected ?Acl $acl = null;
 
     /**
      * AclRole role objects
      * @var array
      */
-    protected $roles = [];
+    protected array $roles = [];
 
     /**
      * Acl strict flag
-     * @var boolean
+     * @var bool
      */
-    protected $aclStrict = false;
+    protected bool $aclStrict = false;
 
     /**
      * Indentation
-     * @var string
+     * @var ?string
      */
-    protected $indent = null;
+    protected ?string $indent = null;
 
     /**
      * Base URL
-     * @var string
+     * @var ?string
      */
-    protected $baseUrl = null;
+    protected ?string $baseUrl = null;
 
     /**
      * Nav parent level
      * @var int
      */
-    protected $parentLevel = 1;
+    protected int $parentLevel = 1;
 
     /**
      * Nav child level
      * @var int
      */
-    protected $childLevel = 1;
+    protected int $childLevel = 1;
 
     /**
      * Return false flag
-     * @var boolean
+     * @var bool
      */
-    protected $returnFalse = false;
+    protected bool $returnFalse = false;
 
     /**
      * Parent nav element
-     * @var Child
+     * @var ?Child
      */
-    protected $nav = null;
+    protected ?Child $nav = null;
 
     /**
      * Constructor
      *
      * Instantiate the nav object
      *
-     * @param  array $tree
-     * @param  array $config
+     * @param  ?array $tree
+     * @param  ?array $config
      */
-    public function __construct(array $tree = null, array $config = null)
+    public function __construct(?array $tree = null, ?array $config = null)
     {
         $this->setTree($tree);
         $this->setConfig($config);
@@ -113,24 +113,24 @@ class Nav
     /**
      * Set the return false flag
      *
-     * @param  boolean $return
+     * @param  bool $return
      * @return Nav
      */
-    public function returnFalse($return)
+    public function returnFalse(bool $return): Nav
     {
-        $this->returnFalse = (bool)$return;
+        $this->returnFalse = $return;
         return $this;
     }
 
     /**
      * Set the nav tree
      *
-     * @param  array $tree
+     * @param  ?array $tree
      * @return Nav
      */
-    public function setTree(array $tree = null)
+    public function setTree(?array $tree = null): Nav
     {
-        $this->tree = (null !== $tree) ? $tree : [];
+        $this->tree = ($tree !== null) ? $tree : [];
         return $this;
     }
 
@@ -138,10 +138,10 @@ class Nav
      * Add to a nav tree branch
      *
      * @param  array   $branch
-     * @param  boolean $prepend
+     * @param  bool $prepend
      * @return Nav
      */
-    public function addBranch(array $branch, $prepend = false)
+    public function addBranch(array $branch, bool $prepend = false): Nav
     {
         if (isset($branch['name'])) {
             $branch = [$branch];
@@ -153,13 +153,13 @@ class Nav
     /**
      * Add to a leaf to nav tree branch
      *
-     * @param  string  $branch
-     * @param  array   $leaf
-     * @param  int     $pos
-     * @param  boolean $prepend
+     * @param  string $branch
+     * @param  array  $leaf
+     * @param  ?int   $pos
+     * @param  bool   $prepend
      * @return Nav
      */
-    public function addLeaf($branch, array $leaf, $pos = null, $prepend = false)
+    public function addLeaf(string $branch, array $leaf, ?int $pos = null, bool $prepend = false): Nav
     {
         $this->tree        = $this->traverseTree($this->tree, $branch, $leaf, $pos, $prepend);
         $this->parentLevel = 1;
@@ -170,12 +170,12 @@ class Nav
     /**
      * Set the nav tree
      *
-     * @param  array $config
+     * @param  ?array $config
      * @return Nav
      */
-    public function setConfig(array $config = null)
+    public function setConfig(?array $config = null): Nav
     {
-        if (null === $config) {
+        if ($config === null) {
             $this->config = [
                 'top'    => [
                     'node'  => 'nav'
@@ -205,10 +205,10 @@ class Nav
     /**
      * Set the Acl object
      *
-     * @param  Acl $acl
+     * @param  ?Acl $acl
      * @return Nav
      */
-    public function setAcl(Acl $acl = null)
+    public function setAcl(?Acl $acl = null): Nav
     {
         $this->acl = $acl;
         return $this;
@@ -217,10 +217,10 @@ class Nav
     /**
      * Set a AclRole object (alias method)
      *
-     * @param  AclRole $role
+     * @param  ?AclRole $role
      * @return Nav
      */
-    public function setRole(AclRole $role = null)
+    public function setRole(?AclRole $role = null): Nav
     {
         $this->roles[$role->getName()] = $role;
         return $this;
@@ -229,10 +229,10 @@ class Nav
     /**
      * Add a AclRole object
      *
-     * @param  AclRole $role
+     * @param  ?AclRole $role
      * @return Nav
      */
-    public function addRole(AclRole $role = null)
+    public function addRole(?AclRole $role = null): Nav
     {
         return $this->setRole($role);
     }
@@ -243,7 +243,7 @@ class Nav
      * @param  array $roles
      * @return Nav
      */
-    public function addRoles(array $roles)
+    public function addRoles(array $roles): Nav
     {
         foreach ($roles as $role) {
             $this->setRole($role);
@@ -255,12 +255,12 @@ class Nav
     /**
      * Set the Acl object as strict evaluation
      *
-     * @param  boolean $strict
+     * @param  bool $strict
      * @return Nav
      */
-    public function setAclStrict($strict)
+    public function setAclStrict(bool $strict): Nav
     {
-        $this->aclStrict = (bool)$strict;
+        $this->aclStrict = $strict;
         return $this;
     }
 
@@ -270,7 +270,7 @@ class Nav
      * @param  string $indent
      * @return Nav
      */
-    public function setIndent($indent)
+    public function setIndent(string $indent): Nav
     {
         $this->indent = $indent;
         return $this;
@@ -282,7 +282,7 @@ class Nav
      * @param  string $baseUrl
      * @return Nav
      */
-    public function setBaseUrl($baseUrl)
+    public function setBaseUrl(string $baseUrl): Nav
     {
         $this->baseUrl = $baseUrl;
         return $this;
@@ -294,9 +294,9 @@ class Nav
      * @param  int $level
      * @return Nav
      */
-    public function setParentLevel($level)
+    public function setParentLevel(int $level): Nav
     {
-        $this->parentLevel = (int)$level;
+        $this->parentLevel = $level;
         return $this;
     }
 
@@ -305,7 +305,7 @@ class Nav
      *
      * @return Nav
      */
-    public function incrementParentLevel()
+    public function incrementParentLevel(): Nav
     {
         $this->parentLevel++;
         return $this;
@@ -316,7 +316,7 @@ class Nav
      *
      * @return Nav
      */
-    public function decrementParentLevel()
+    public function decrementParentLevel(): Nav
     {
         $this->parentLevel--;
         return $this;
@@ -328,9 +328,9 @@ class Nav
      * @param  int $level
      * @return Nav
      */
-    public function setChildLevel($level)
+    public function setChildLevel(int $level): Nav
     {
-        $this->childLevel = (int)$level;
+        $this->childLevel = $level;
         return $this;
     }
 
@@ -339,7 +339,7 @@ class Nav
      *
      * @return Nav
      */
-    public function incrementChildLevel()
+    public function incrementChildLevel(): Nav
     {
         $this->childLevel++;
         return $this;
@@ -350,7 +350,7 @@ class Nav
      *
      * @return Nav
      */
-    public function decrementChildLevel()
+    public function decrementChildLevel(): Nav
     {
         $this->childLevel--;
         return $this;
@@ -359,9 +359,9 @@ class Nav
     /**
      * Set the return false flag
      *
-     * @return boolean
+     * @return bool
      */
-    public function isReturnFalse()
+    public function isReturnFalse(): bool
     {
         return $this->returnFalse;
     }
@@ -369,9 +369,9 @@ class Nav
     /**
      * Determine if the Acl object is set as strict evaluation
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAclStrict()
+    public function isAclStrict(): bool
     {
         return $this->aclStrict;
     }
@@ -381,7 +381,7 @@ class Nav
      *
      * @return array
      */
-    public function getTree()
+    public function getTree(): array
     {
         return $this->tree;
     }
@@ -391,7 +391,7 @@ class Nav
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -399,9 +399,9 @@ class Nav
     /**
      * Get the Acl object
      *
-     * @return Acl
+     * @return Acl|null
      */
-    public function getAcl()
+    public function getAcl(): Acl|null
     {
         return $this->acl;
     }
@@ -409,9 +409,9 @@ class Nav
     /**
      * Determine if there are roles
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasRoles()
+    public function hasRoles(): bool
     {
         return (count($this->roles) > 0);
     }
@@ -420,9 +420,9 @@ class Nav
      * Determine if there is a certain role
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function hasRole($name)
+    public function hasRole(string $name): bool
     {
         return (isset($this->roles[$name]));
     }
@@ -432,7 +432,7 @@ class Nav
      *
      * @return array
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
     }
@@ -441,19 +441,19 @@ class Nav
      * Get a AclRole object
      *
      * @param  string $name
-     * @return AclRole
+     * @return AclRole|null
      */
-    public function getRole($name)
+    public function getRole(string $name): AclRole|null
     {
-        return (isset($this->roles[$name])) ? $this->roles[$name] : null;
+        return $this->roles[$name] ?? null;
     }
 
     /**
      * Get the indent
      *
-     * @return string
+     * @return string|null
      */
-    public function getIndent()
+    public function getIndent(): string|null
     {
         return $this->indent;
     }
@@ -461,9 +461,9 @@ class Nav
     /**
      * Get the base URL
      *
-     * @return string
+     * @return string|null
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string|null
     {
         return $this->baseUrl;
     }
@@ -473,7 +473,7 @@ class Nav
      *
      * @return int
      */
-    public function getParentLevel()
+    public function getParentLevel(): int
     {
         return $this->parentLevel;
     }
@@ -483,7 +483,7 @@ class Nav
      *
      * @return int
      */
-    public function getChildLevel()
+    public function getChildLevel(): int
     {
         return $this->childLevel;
     }
@@ -493,9 +493,9 @@ class Nav
      *
      * @return Child
      */
-    public function getNav()
+    public function getNav(): Child
     {
-        if (null === $this->nav) {
+        if ($this->nav === null) {
             $this->nav = NavBuilder::build($this, $this->tree);
         }
         return $this->nav;
@@ -506,7 +506,7 @@ class Nav
      *
      * @return Child
      */
-    public function nav()
+    public function nav(): Child
     {
         return $this->getNav();
     }
@@ -516,9 +516,9 @@ class Nav
      *
      * @return Nav
      */
-    public function build()
+    public function build(): Nav
     {
-        if (null === $this->nav) {
+        if ($this->nav === null) {
             $this->nav = NavBuilder::build($this, $this->tree);
         }
         return $this;
@@ -529,7 +529,7 @@ class Nav
      *
      * @return Nav
      */
-    public function rebuild()
+    public function rebuild(): Nav
     {
         $this->parentLevel = 1;
         $this->childLevel  = 1;
@@ -542,14 +542,13 @@ class Nav
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
-        if (null === $this->nav) {
+        if ($this->nav === null) {
             $this->nav = NavBuilder::build($this, $this->tree);
         }
 
-        $result = ($this->nav->hasChildren()) ? $this->nav->render() : '';
-        return $result;
+        return ($this->nav->hasChildren()) ? $this->nav->render() : '';
     }
 
     /**
@@ -565,19 +564,21 @@ class Nav
     /**
      * Traverse tree to insert new leaf
      *
-     * @param  array   $tree
-     * @param  string  $branch
-     * @param  array   $newLeaf
-     * @param  int     $pos
-     * @param  boolean $prepend
-     * @param  int     $depth
+     * @param  array  $tree
+     * @param  string $branch
+     * @param  array  $newLeaf
+     * @param  ?int   $pos
+     * @param  bool   $prepend
+     * @param  int    $depth
      * @return array
      */
-    protected function traverseTree($tree, $branch, $newLeaf, $pos = null, $prepend = false, $depth = 0)
+    protected function traverseTree(
+        array $tree, string $branch, array $newLeaf, ?int $pos = null, bool $prepend = false, int $depth = 0
+    ): array
     {
         $t = [];
         foreach ($tree as $leaf) {
-            if (((null === $pos) || ($pos == $depth)) && ($leaf['name'] == $branch)) {
+            if ((($pos === null) || ($pos == $depth)) && ($leaf['name'] == $branch)) {
                 if (isset($leaf['children'])) {
                     $leaf['children'] = ($prepend) ?
                         array_merge([$newLeaf], $leaf['children']) : array_merge($leaf['children'], [$newLeaf]);
