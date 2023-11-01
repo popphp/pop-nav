@@ -85,7 +85,7 @@ class NavBuilder
                 if (($navObject->isReturnFalse()) && (($href == '#') || (str_ends_with($href, '#')))) {
                     $a->setAttribute('onclick', 'return false;');
                 }
-                $url = $_SERVER['REQUEST_URI'];
+                $url = $_SERVER['REQUEST_URI'] ?? null;
                 if (str_contains($url, '?')) {
                     $url = substr($url, strpos($url, '?'));
                 }

@@ -16,7 +16,7 @@ Overview
 --------
 `pop-nav` is a component for managing and rendering an HTML navigation tree. It includes support for
 injecting ACL functionality to display only the certain branches of the navigation tree that the
-current user role is allowed to access. For this, the `pop-acl` component is used.
+current user role is allowed to access. For that, the `pop-acl` component is used.
 
 `pop-nav` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
@@ -39,8 +39,6 @@ Or, require it in your composer.json file
 
 Quickstart
 ----------
-
-### A basic example
 
 First, you can define the navigation tree:
 
@@ -139,9 +137,9 @@ $editor = new Role('editor');
 
 $acl->addRoles([$admin, $editor]);
 
-$acl->addResource(new Resource('second-child'));
+$acl->addResource(new Resource('config'));
 $acl->allow('admin');
-$acl->deny('editor', 'second-child');
+$acl->deny('editor', 'config');
 ```
 
 And then we add the ACL rules to the navigation tree:
@@ -149,25 +147,25 @@ And then we add the ACL rules to the navigation tree:
 ```php
 $tree = [
     [
-        'name'     => 'First Nav Item',
-        'href'     => '/first-page',
+        'name'     => 'Home',
+        'href'     => '/home',
         'children' => [
             [
-                'name' => 'First Child',
-                'href' => 'first-child'
+                'name' => 'Users',
+                'href' => 'users'
             ],
             [
-                'name' => 'Second Child',
-                'href' => 'second-child',
+                'name' => 'Config',
+                'href' => 'config',
                 'acl'  => [
-                    'resource' => 'second-child'
+                    'resource' => 'config'
                 ]
             ]
         ]
     ],
     [
-        'name' => 'Second Nav Item',
-        'href' => '/second-page'
+        'name' => 'Orders',
+        'href' => '/orders'
     ]
 ];
 ```
@@ -175,28 +173,55 @@ $tree = [
 We then inject the ACL object into the navigation object, set the current role and render the navigation:
 
 ```php
-$nav = new Nav($tree, $config);
+$nav = new Nav($tree);
 $nav->setAcl($acl);
 $nav->setRole($editor);
 echo $nav;
 ```
 
 ```html
-    <nav id="main-nav">
-        <nav id="menu-1" class="item-1">
-            <a href="/first-page" class="link-off">First Nav Item</a>
-            <nav id="nav-2" class="level-2">
-                <nav id="menu-2" class="item-2">
-                    <a href="/first-page/first-child" class="link-off">First Child</a>
-                </nav>
+<nav>
+    <nav>
+        <a href="/home">Home</a>
+        <nav>
+            <nav>
+                <a href="/home/users">Users</a>
             </nav>
         </nav>
-        <nav id="menu-3" class="item-1">
-            <a href="/second-page" class="link-off">Second Nav Item</a>
-        </nav>
     </nav>
+    <nav>
+        <a href="/orders">Orders</a>
+    </nav>
+</nav>
 ```
 
-Because the 'editor' role is denied access to the 'second-child' page, that nav branch is not rendered.
+Because the 'editor' role is denied access to the `config` page, that nav branch is not rendered. However,
+if the role is set to `$admin`, the `config` branch renders:
+
+```php
+$nav = new Nav($tree);
+$nav->setAcl($acl);
+$nav->setRole($admin);
+echo $nav;
+```
+
+```html
+<nav>
+    <nav>
+        <a href="/home">Home</a>
+        <nav>
+            <nav>
+                <a href="/home/users">Users</a>
+            </nav>
+            <nav>
+                <a href="/home/config">Config</a>
+            </nav>
+        </nav>
+    </nav>
+    <nav>
+        <a href="/orders">Orders</a>
+    </nav>
+</nav>
+```
 
 [Top](#pop-nav)
