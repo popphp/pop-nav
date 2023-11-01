@@ -4,7 +4,15 @@ pop-nav
 [![Build Status](https://github.com/popphp/pop-nav/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-nav/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-nav)](http://cc.popphp.org/pop-nav/)
 
-OVERVIEW
+[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
+[![Join the chat at https://discord.gg/D9JBxPa5](https://media.popphp.org/img/discord.svg)](https://discord.gg/D9JBxPa5)
+
+* [Overview](#overview)
+* [Install](#install)
+* [Quickstart](#quickstart)
+* [Using ACL](#using-acl)
+
+Overview
 --------
 `pop-nav` is a component for managing and rendering an HTML navigation tree. It includes support for
 injecting ACL functionality to display only the certain branches of the navigation tree that the
@@ -12,7 +20,9 @@ current user role is allowed to access. For this, the `pop-acl` component is use
 
 `pop-nav` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-INSTALL
+[Top](#pop-nav)
+
+Install
 -------
 
 Install `pop-nav` using Composer.
@@ -25,9 +35,10 @@ Or, require it in your composer.json file
         "popphp/pop-nav" : "^4.0.0"
     }
 
+[Top](#pop-nav)
 
-BASIC USAGE
------------
+Quickstart
+----------
 
 ### A basic example
 
@@ -109,7 +120,10 @@ echo $nav;
     </nav>
 ```
 
-### An advanced example using the ACL
+[Top](#pop-nav)
+
+Using ACL
+---------
 
 First, let's set up the ACL object with some roles and resources:
 
@@ -185,3 +199,4 @@ echo $nav;
 
 Because the 'editor' role is denied access to the 'second-child' page, that nav branch is not rendered.
 
+[Top](#pop-nav)
