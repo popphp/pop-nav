@@ -10,6 +10,7 @@ pop-nav
 * [Overview](#overview)
 * [Install](#install)
 * [Quickstart](#quickstart)
+* [Config](#config)
 * [Using ACL](#using-acl)
 
 Overview
@@ -45,28 +46,58 @@ First, you can define the navigation tree:
 ```php
 $tree = [
     [
-        'name'     => 'First Nav Item',
-        'href'     => '/first-page',
+        'name'     => 'Users',
+        'href'     => '/users',
         'children' => [
             [
-                'name' => 'First Child',
-                'href' => 'first-child'
+                'name' => 'Roles',
+                'href' => 'roles'
             ],
             [
-                'name' => 'Second Child',
-                'href' => 'second-child'
+                'name' => 'Config',
+                'href' => 'config'
             ]
         ]
     ],
     [
-        'name' => 'Second Nav Item',
-        'href' => '/second-page'
+        'name' => 'Orders',
+        'href' => '/orders'
     ]
 ];
 ```
 
-Then, you have a significant amount of control over the branch nodes
-and attributes via a configuration array:
+Then you can pass that to the nav object and render the nav:
+
+```php
+$nav = new Nav($tree);
+echo $nav;
+```
+
+```html
+<nav>
+    <nav>
+        <a href="/users">Users</a>
+        <nav>
+            <nav>
+                <a href="/users/roles">Roles</a>
+            </nav>
+            <nav>
+                <a href="/users/config">Config</a>
+            </nav>
+        </nav>
+    </nav>
+    <nav>
+        <a href="/orders">Orders</a>
+    </nav>
+</nav>
+
+```
+
+Config
+------
+
+You have a significant amount of control over the branch nodes and attributes
+via a configuration array:
 
 ```php
 $config = [
@@ -90,7 +121,8 @@ $config = [
 ];
 ```
 
-You can then create and render your nav object:
+Using the same navigation tree from above, you can then create and render your nav object
+with the config:
 
 ```php
 use Pop\Nav\Nav;
@@ -101,21 +133,21 @@ echo $nav;
 
 ```html
     <nav id="main-nav">
-        <nav id="menu-1" class="item-1">
-            <a href="/first-page" class="link-off">First Nav Item</a>
-            <nav id="nav-2" class="level-2">
-                <nav id="menu-2" class="item-2">
-                    <a href="/first-page/first-child" class="link-off">First Child</a>
-                </nav>
-                <nav id="menu-3" class="item-2">
-                    <a href="/first-page/second-child" class="link-off">Second Child</a>
-                </nav>
+    <nav id="menu-1" class="item-1">
+        <a href="/users" class="link-off">Users</a>
+        <nav id="nav-2" class="level-2">
+            <nav id="menu-2" class="item-2">
+                <a href="/users/roles" class="link-off">Roles</a>
+            </nav>
+            <nav id="menu-3" class="item-2">
+                <a href="/users/config" class="link-off">Config</a>
             </nav>
         </nav>
-        <nav id="menu-4" class="item-1">
-            <a href="/second-page" class="link-off">Second Nav Item</a>
-        </nav>
     </nav>
+    <nav id="menu-4" class="item-1">
+        <a href="/orders" class="link-off">Orders</a>
+    </nav>
+</nav>
 ```
 
 [Top](#pop-nav)
