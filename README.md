@@ -93,6 +93,8 @@ echo $nav;
 
 ```
 
+[Top](#pop-nav)
+
 Config
 ------
 
