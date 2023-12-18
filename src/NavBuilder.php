@@ -59,8 +59,8 @@ class NavBuilder
                     $resource   = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
                     $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
                     $allowed    = ($navObject->isAclStrict()) ?
-                        $navObject->getAcl()->isAllowedManyStrict($navObject->getRoles(), $resource, $permission) :
-                        $navObject->getAcl()->isAllowedMany($navObject->getRoles(), $resource, $permission);
+                        $navObject->getAcl()->isAllowedMultiStrict($navObject->getRoles(), $resource, $permission) :
+                        $navObject->getAcl()->isAllowedMulti($navObject->getRoles(), $resource, $permission);
                 }
             }
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
@@ -147,7 +147,7 @@ class NavBuilder
                                 } else {
                                     $resource   = (isset($nodeChild['acl']['resource'])) ? $nodeChild['acl']['resource'] : null;
                                     $permission = (isset($nodeChild['acl']['permission'])) ? $nodeChild['acl']['permission'] : null;
-                                    $method     = ($navObject->isAclStrict()) ? 'isAllowedManyStrict' : 'isAllowedMany';
+                                    $method     = ($navObject->isAclStrict()) ? 'isAllowedMultiStrict' : 'isAllowedMulti';
                                     if (!($navObject->getAcl()->{$method}($navObject->getRoles(), $resource, $permission))) {
                                         $i++;
                                     }
