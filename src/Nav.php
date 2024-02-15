@@ -407,6 +407,16 @@ class Nav
     }
 
     /**
+     * Determine if there is an ACL object
+     *
+     * @return bool
+     */
+    public function hasAcl(): bool
+    {
+        return ($this->acl !== null);
+    }
+
+    /**
      * Determine if there are roles
      *
      * @return bool

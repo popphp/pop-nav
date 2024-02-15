@@ -236,6 +236,7 @@ class NavTest extends TestCase
         $result = ob_get_clean();
 
         $menu = (string)$nav;
+        $this->assertTrue($nav->hasAcl());
         $this->assertInstanceOf('Pop\Acl\Acl', $nav->getAcl());
         $this->assertInstanceOf('Pop\Acl\AclRole', $nav->getRole('editor'));
         $this->assertEquals('    ', $nav->getConfig()['indent']);
