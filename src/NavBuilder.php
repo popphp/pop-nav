@@ -58,9 +58,24 @@ class NavBuilder
                 } else {
                     $resource   = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
                     $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
+                    $policy     = (isset($node['acl']['policy'])) ? $node['acl']['policy'] : null;
                     $allowed    = ($navObject->isAclStrict()) ?
                         $navObject->getAcl()->isAllowedMultiStrict($navObject->getRoles(), $resource, $permission) :
                         $navObject->getAcl()->isAllowedMulti($navObject->getRoles(), $resource, $permission);
+
+                    if (!empty($policy)) {
+                        if ($policy instanceof \Pop\Utils\CallableObject) {
+                            $policy = $policy->call();
+                        } else if (is_callable($policy)) {
+                            $policy = call_user_func($policy);
+                        } else if (is_array($policy) && isset($policy[0]) && is_callable($policy[0])) {
+                            $callable = $policy[0];
+                            unset($policy[0]);
+                            $policy = call_user_func_array($callable, array_values($policy));
+                        }
+
+                        $allowed = $navObject->getAcl()->evaluatePolicy($permission, $policy, $resource);
+                    }
                 }
             }
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
