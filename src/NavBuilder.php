@@ -41,6 +41,7 @@ class NavBuilder
     public static function build(Nav $navObject, array $tree, int $depth = 1, ?string $parentHref = null): Child
     {
         $config        = $navObject->getConfig();
+        $globalPolicy  = $config['policy'] ?? null;
         [$nav, $child] = self::prepare($navObject, $config, $depth);
 
         $navObject->incrementParentLevel();
@@ -58,7 +59,7 @@ class NavBuilder
                 } else {
                     $resource   = (isset($node['acl']['resource'])) ? $node['acl']['resource'] : null;
                     $permission = (isset($node['acl']['permission'])) ? $node['acl']['permission'] : null;
-                    $policy     = (isset($node['acl']['policy'])) ? $node['acl']['policy'] : null;
+                    $policy     = (isset($node['acl']['policy'])) ? $node['acl']['policy'] : $globalPolicy;
                     $allowed    = ($navObject->isAclStrict()) ?
                         $navObject->getAcl()->isAllowedMultiStrict($navObject->getRoles(), $resource, $permission) :
                         $navObject->getAcl()->isAllowedMulti($navObject->getRoles(), $resource, $permission);
@@ -74,7 +75,10 @@ class NavBuilder
                             $policy = call_user_func_array($callable, array_values($policy));
                         }
 
-                        $allowed = $navObject->getAcl()->evaluatePolicy($permission, $policy, $resource);
+                        $policyResult = $navObject->getAcl()->evaluatePolicy($permission, $policy, $resource);
+                        if ($policyResult === false) {
+                            $allowed = false;
+                        }
                     }
                 }
             }
