@@ -76,8 +76,8 @@ class NavBuilder
                         }
 
                         $policyResult = $navObject->getAcl()->evaluatePolicy($permission, $policy, $resource);
-                        if ($policyResult === false) {
-                            $allowed = false;
+                        if ($policyResult !== null) {
+                            $allowed = $policyResult;
                         }
                     }
                 }
