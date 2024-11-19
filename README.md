@@ -4,7 +4,6 @@ pop-nav
 [![Build Status](https://github.com/popphp/pop-nav/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-nav/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-nav)](http://cc.popphp.org/pop-nav/)
 
-[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
 * [Overview](#overview)
@@ -19,7 +18,7 @@ Overview
 injecting ACL functionality to display only the certain branches of the navigation tree that the
 current user role is allowed to access. For that, the `pop-acl` component is used.
 
-`pop-nav` is a component of the [Pop PHP Framework](http://www.popphp.org/).
+`pop-nav` is a component of the [Pop PHP Framework](https://www.popphp.org/).
 
 [Top](#pop-nav)
 
@@ -33,7 +32,7 @@ Install `pop-nav` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-nav" : "^4.0.0"
+        "popphp/pop-nav" : "^4.1.2"
     }
 
 [Top](#pop-nav)
