@@ -32,7 +32,7 @@ Install `pop-nav` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-nav" : "^4.1.2"
+        "popphp/pop-nav" : "^4.1.3"
     }
 
 [Top](#pop-nav)
