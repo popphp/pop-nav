@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Nav
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.1.5
+ * @version    5.0.0
  */
 class NavBuilder
 {
@@ -65,17 +65,23 @@ class NavBuilder
                         $navObject->getAcl()->isAllowedMulti($navObject->getRoles(), $resource, $permission);
 
                     if (!empty($policy)) {
+                        // The 'policy' config/node value is a callable that must resolve to the
+                        // ACL role to evaluate the policy against - a role name string, or an
+                        // object using Pop\Acl\Policy\PolicyTrait. It is *not* itself a permission
+                        // decision; Acl::evaluatePolicy() calls $policyRole->can($permission, $resource).
                         if ($policy instanceof \Pop\Utils\CallableObject) {
-                            $policy = $policy->call();
+                            $policyRole = $policy->call();
                         } else if (is_callable($policy)) {
-                            $policy = call_user_func($policy);
+                            $policyRole = call_user_func($policy);
                         } else if (is_array($policy) && isset($policy[0]) && is_callable($policy[0])) {
                             $callable = $policy[0];
                             unset($policy[0]);
-                            $policy = call_user_func_array($callable, array_values($policy));
+                            $policyRole = call_user_func_array($callable, array_values($policy));
+                        } else {
+                            $policyRole = $policy;
                         }
 
-                        $policyResult = $navObject->getAcl()->evaluatePolicy($permission, $policy, $resource);
+                        $policyResult = $navObject->getAcl()->evaluatePolicy($permission, $policyRole, $resource);
                         if ($policyResult !== null) {
                             $allowed = $policyResult;
                         }
@@ -84,7 +90,7 @@ class NavBuilder
             }
             if (($allowed) && isset($node['name']) && isset($node['href'])) {
                 // Create child node and child link node
-                $a = new Child('a', $node['name']);
+                $a = new Child('a', htmlspecialchars($node['name'], ENT_QUOTES));
 
                 if ((str_starts_with($node['href'], '#')) || (str_ends_with($node['href'], '#')) ||
                     (str_starts_with($node['href'], 'http')) || (str_starts_with($node['href'], 'mailto:'))) {
@@ -104,9 +110,9 @@ class NavBuilder
                 if (($navObject->isReturnFalse()) && (($href == '#') || (str_ends_with($href, '#')))) {
                     $a->setAttribute('onclick', 'return false;');
                 }
-                $url = $_SERVER['REQUEST_URI'] ?? null;
-                if (str_contains($url, '?')) {
-                    $url = substr($url, strpos($url, '?'));
+                $url = $navObject->getCurrentUrl() ?? ($_SERVER['REQUEST_URI'] ?? null);
+                if (($url !== null) && str_contains($url, '?')) {
+                    $url = substr($url, 0, strpos($url, '?'));
                 }
 
                 $linkClass = null;

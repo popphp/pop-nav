@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -23,9 +23,9 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Nav
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.1.5
+ * @version    5.0.0
  */
 class Nav
 {
@@ -71,6 +71,13 @@ class Nav
      * @var ?string
      */
     protected ?string $baseUrl = null;
+
+    /**
+     * Current URL, used to determine the "on"/"off" link class.
+     * Falls back to $_SERVER['REQUEST_URI'] when not explicitly set.
+     * @var ?string
+     */
+    protected ?string $currentUrl = null;
 
     /**
      * Nav parent level
@@ -131,6 +138,7 @@ class Nav
     public function setTree(?array $tree = null): Nav
     {
         $this->tree = ($tree !== null) ? $tree : [];
+        $this->nav  = null;
         return $this;
     }
 
@@ -147,6 +155,7 @@ class Nav
             $branch = [$branch];
         }
         $this->tree = ($prepend) ? array_merge($branch, $this->tree) : array_merge($this->tree, $branch);
+        $this->nav  = null;
         return $this;
     }
 
@@ -164,6 +173,7 @@ class Nav
         $this->tree        = $this->traverseTree($this->tree, $branch, $leaf, $pos, $prepend);
         $this->parentLevel = 1;
         $this->childLevel  = 1;
+        $this->nav         = null;
         return $this;
     }
 
@@ -197,6 +207,10 @@ class Nav
 
         if (isset($config['baseUrl'])) {
             $this->setBaseUrl($config['baseUrl']);
+        }
+
+        if (isset($config['currentUrl'])) {
+            $this->setCurrentUrl($config['currentUrl']);
         }
 
         return $this;
@@ -285,6 +299,19 @@ class Nav
     public function setBaseUrl(string $baseUrl): Nav
     {
         $this->baseUrl = $baseUrl;
+        return $this;
+    }
+
+    /**
+     * Set the current URL, used to determine the "on"/"off" link class.
+     * If not set, falls back to $_SERVER['REQUEST_URI'].
+     *
+     * @param  string $currentUrl
+     * @return Nav
+     */
+    public function setCurrentUrl(string $currentUrl): Nav
+    {
+        $this->currentUrl = $currentUrl;
         return $this;
     }
 
@@ -476,6 +503,16 @@ class Nav
     public function getBaseUrl(): string|null
     {
         return $this->baseUrl;
+    }
+
+    /**
+     * Get the current URL
+     *
+     * @return string|null
+     */
+    public function getCurrentUrl(): string|null
+    {
+        return $this->currentUrl;
     }
 
     /**
