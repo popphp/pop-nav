@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -212,7 +213,7 @@ class NavBuilder
     {
         // Create overriding top level parent, if set
         if (($depth == 1) && isset($config['top'])) {
-            $parent = (isset($config['top']) && isset($config['top']['node'])) ? $config['top']['node'] : 'nav';
+            $parent = (isset($config['top']['node'])) ? $config['top']['node'] : 'nav';
             $child  = null;
             if (isset($config['child']) && isset($config['child']['node'])) {
                 $child = $config['child']['node'];
@@ -227,10 +228,10 @@ class NavBuilder
             }
 
             // Set top attributes if they exist
-            if (isset($config['top']) && isset($config['top']['id'])) {
+            if (isset($config['top']['id'])) {
                 $nav->setAttribute('id', $config['top']['id']);
             }
-            if (isset($config['top']) && isset($config['top']['class'])) {
+            if (isset($config['top']['class'])) {
                 $nav->setAttribute('class', $config['top']['class']);
             }
             if (isset($config['top']['attributes'])) {
